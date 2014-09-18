@@ -1,16 +1,33 @@
 {
-				id: "ideas-plaintext-language",
-				extension: "txt",
-				name: "Text",
+				id: "ideas-lusdl-language",
+				extension: "ttl",
+				name: "Linked USDL",
 				formats: [
 				 	{
-				 		format: "txt",
+				 		format: "ttl",
 				 		checkLanguage: "true"
 				 	}
 				],
 				 
-				operations: [],
+				operations: [
+					{
+						id: "transform2iAgree",
+						name: "Transform Document to iAgree",
+						data: {"uri":'(function(){ ret =""; array=fileUri.split("/"); name=array[array.length-1].split("ttl"); for(s=0; s < array.length-1; s++){ret += array[s] + "/";}ret += name[0] + "iagreetemplate"; return ret; })'},
+						_remoteExecution: "true",
+						action: "function(result) {
+								evaluate = result.data['uri'];
+							FileApi.loadWorkspace( WorkspaceManager.getSelectedWorkspace() , function(ts) {
+								var treeStruct = ts;
+								var root = $('#projectsTree').dynatree('getRoot');
+								root.removeChildren();
+								root.addChild(treeStruct); 				
+								$('.dynatree-expander').click();
+								EditorManager.openFile(eval(evaluate)());
+							});
+						}"
+					}
+				],
 				             
 				inspectorLoader: "function(loader, format) {}"
-
-			}
+}
